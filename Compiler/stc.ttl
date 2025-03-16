@@ -1,0 +1,21 @@
+;uploads compileable from folder to arduino
+
+connect '/C=3'
+setecho 1
+setbaud 9600
+setflowctrl 3
+
+fileopen instructions 'compilable.2p4' 0 0
+waitln ''
+
+:loop
+filereadln instructions command
+if result goto fclose
+send command
+mpause 250
+goto loop
+
+:fclose 
+fileclose instructions
+
+exit
