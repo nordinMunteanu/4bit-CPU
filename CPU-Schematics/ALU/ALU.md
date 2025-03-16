@@ -1,6 +1,8 @@
 # 4Bit ALU
-INPUTS: A, B, OpCode, Y
-OUTPUTS: C, FLAGS
+
+### INPUTS: A, B, OpCode, Y
+
+### OUTPUTS: C, FLAGS
 
 A, B - input variables - they represent the variables used for the ALU Operations. Every operation follows the formula C = A<>B, where <> is the operation to be effectuated. A is always the minuent, or the base of all operations.
 Y- flag bit, allows you to chose between addition, substraction, incrememntation, decrementation
