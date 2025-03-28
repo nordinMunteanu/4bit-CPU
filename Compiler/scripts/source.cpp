@@ -14,11 +14,11 @@ const int comment_color = 6;
 const int success_color = 10;
 
 
-int main(/*int argc, char *argv[]*/){
+int main(int argc, char *argv[]){
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, comment_color);
 	std::cout<<"\tRunning precompilation subroutine...\n";
-	std::ifstream fin("test.txt");
+	std::ifstream fin(argv[1]);
 	std::ofstream fout("compilable.2p4");
 
 	if(!fin.is_open()){
