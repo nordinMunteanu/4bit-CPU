@@ -5,7 +5,9 @@ A
   - 2 - problem with program flag
   - 3 - problem with program constant
   - 4 - problem with program register
+
 B 
   - 1 - value received from precompiler not handleable
   - 2 - value out of upper range
   - 3 - value out of lower range
+  - 4 - instruction does not respect format rules
