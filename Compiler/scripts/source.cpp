@@ -1,4 +1,4 @@
-#if defined _WIN32 || defined _WIN64
+//#if defined _WIN32 || defined _WIN64
 #define NOMINMAX
 #include <windows.h>
 #include <iostream>
@@ -18,12 +18,12 @@ bool is_empty(std::ifstream& pFile)
     return pFile.peek() == std::ifstream::traits_type::eof();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, comment_color);
-    std::cout<<"Running compiler\n";
-    std::ifstream fin("compilable.2p4");
+    std::cout<<"Running pre-compilation subroutine\n";
+    std::ifstream fin(argv[1]);
 
     fin>>std::ws;
 
@@ -45,6 +45,7 @@ int main()
 
     std::string line;
     int i = 0;
+    int countInputs = 0;
 
     while(getline(fin, line)){
 		std::transform(line.begin(), line.end(), line.begin(), ::toupper);
@@ -58,18 +59,33 @@ int main()
                 tokens.push_back(intermediate);
             }
 
+
             for(auto i : tokens){
+
                 if(i[0] == 'R' && i[1] >='0' && i[1] <= '9'){
+                    countInputs--;
                     i.erase(i.begin()+0);
                 }
 
                 if(i[0] >='A' && i[0] <= 'Z'){
-                    fout<<"<@"<<i<<'>';
+                    if(countInputs <= 0){
+                        countInputs = 2;
+                    }
+                    else{
+                        while(countInputs){
+                            countInputs --;
+                            fout<<"<0>";
+                        }
+                    }
+
+                    fout<<"<"<<i<<'>';
                 }
 
                 if(i[0] >= '0' && i[0] <= '9'){
-                    fout<<"<%"<<i<<'>';
+                    fout<<"<"<<i<<'>';
+                    countInputs--;
                 }
+
             }
         }
     }
@@ -77,12 +93,12 @@ int main()
     fout<<"\n-0";
 
     SetConsoleTextAttribute(hConsole, success_color);
-    std::cout<<"Compiling successful!";
+    std::cout<<"Pre-compilation successful!";
     SetConsoleTextAttribute(hConsole, default_color);
 
     return 0;
 }
-#else
+/*#else
 
 #include <iostream>
 
@@ -92,3 +108,4 @@ int main(){
 }
 
 #endif
+*/
