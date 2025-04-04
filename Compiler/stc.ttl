@@ -5,7 +5,7 @@ setecho 1
 setbaud 9600
 setflowctrl 3
 
-fileopen instructions 'compf.2p4hex' 0 0
+fileopen instructions 'scripts/compf.2p4hex' 0 0
 waitln ''
 
 :loop
