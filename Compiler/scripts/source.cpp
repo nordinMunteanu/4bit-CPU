@@ -1,3 +1,4 @@
+#if defined _WIN32 || defined _WIN64
 #define NOMINMAX
 #include <windows.h>
 #include <iostream>
@@ -7,32 +8,45 @@
 #include <vector>
 #include <sstream>
 
+const int default_color = 7,
+          error_color = 4,
+          comment_color = 6,
+          success_color = 10;
 
-const int default_color = 7;
-const int error_color = 4;
-const int comment_color = 6;
-const int success_color = 10;
+bool is_empty(std::ifstream& pFile)
+{
+    return pFile.peek() == std::ifstream::traits_type::eof();
+}
 
+int main()
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, comment_color);
+    std::cout<<"Running compiler\n";
+    std::ifstream fin("compilable.2p4");
 
-int main(int argc, char *argv[]){
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, comment_color);
-	std::cout<<"\tRunning precompilation subroutine...\n";
-	std::ifstream fin(argv[1]);
-	std::ofstream fout("compilable.2p4");
+    fin>>std::ws;
 
-	if(!fin.is_open()){
-		SetConsoleTextAttribute(hConsole, error_color);
-		std::cout<<"\tError: file not found\n";
-		SetConsoleTextAttribute(hConsole, default_color);
-		return 0;
-	}
+    std::ofstream fout("compf.2p4hex");
 
-	std::string line;
+    if(!fin.is_open()){
+        SetConsoleTextAttribute(hConsole, error_color);
+        std::cout<<"Error: file not found: F1000";
+        SetConsoleTextAttribute(hConsole, default_color);
+        return 1;
+    }
+    if(is_empty(fin)){
+        SetConsoleTextAttribute(hConsole, error_color);
+        std::cout<<"Error: file is empty: F0000";
+        SetConsoleTextAttribute(hConsole, default_color);
+        fout<<"-1";
+        return 1;
+    }
 
-	int i = 0;
+    std::string line;
+    int i = 0;
 
-	while(getline(fin, line)){
+    while(getline(fin, line)){
 		std::transform(line.begin(), line.end(), line.begin(), ::toupper);
 		if(line.size()!=0 && line[0] != ';'){
             std::vector<std::string>tokens;
@@ -58,11 +72,23 @@ int main(int argc, char *argv[]){
                 }
             }
         }
-	}
+    }
 
-	SetConsoleTextAttribute(hConsole, success_color);
-	std::cout<<"\tDone!\n";
-	SetConsoleTextAttribute(hConsole, default_color);
+    fout<<"\n-0";
 
-	return 0;
+    SetConsoleTextAttribute(hConsole, success_color);
+    std::cout<<"Compiling successful!";
+    SetConsoleTextAttribute(hConsole, default_color);
+
+    return 0;
 }
+#else
+
+#include <iostream>
+
+int main(){
+    std::cout<<"Error: wrong operating system detected: W0000\n";
+    return 1;
+}
+
+#endif
