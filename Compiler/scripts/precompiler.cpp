@@ -1,4 +1,4 @@
-//#if defined _WIN32 || defined _WIN64
+#if defined _WIN32 || defined _WIN64
 #define NOMINMAX
 #include <windows.h>
 #include <iostream>
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-/*#else
+#else
 
 #include <iostream>
 
@@ -106,6 +106,4 @@ int main(){
     std::cout<<"Error: wrong operating system detected: W0000\n";
     return 1;
 }
-
 #endif
-*/
