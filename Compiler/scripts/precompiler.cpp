@@ -1,4 +1,3 @@
-#if defined _WIN32 || defined _WIN64
 #define NOMINMAX
 #include <windows.h>
 #include <iostream>
@@ -23,7 +22,7 @@ int main(int argc, char *argv[])
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, comment_color);
     std::cout<<"Running pre-compilation subroutine\n";
-    std::ifstream fin(argv[1]);
+    std::ifstream fin("test.2p4");
 
     fin>>std::ws;
 
@@ -31,13 +30,13 @@ int main(int argc, char *argv[])
 
     if(!fin.is_open()){
         SetConsoleTextAttribute(hConsole, error_color);
-        std::cout<<"Error: file not found: F1000";
+        std::cout<<"Error: file not found: F100";
         SetConsoleTextAttribute(hConsole, default_color);
         return 1;
     }
     if(is_empty(fin)){
         SetConsoleTextAttribute(hConsole, error_color);
-        std::cout<<"Error: file is empty: F0000";
+        std::cout<<"Error: file is empty: F000";
         SetConsoleTextAttribute(hConsole, default_color);
         fout<<"-1";
         return 1;
@@ -68,29 +67,32 @@ int main(int argc, char *argv[])
                 }
 
                 if(i[0] >='A' && i[0] <= 'Z'){
+                    while(countInputs){
+                        countInputs --;
+                        fout<<"0\n";
+                    }
+
                     if(countInputs <= 0){
                         countInputs = 2;
                     }
-                    else{
-                        while(countInputs){
-                            countInputs --;
-                            fout<<"<0>";
-                        }
-                    }
 
-                    fout<<"<"<<i<<'>';
+                    fout<<i<<"\n";
                 }
 
                 if(i[0] >= '0' && i[0] <= '9'){
-                    fout<<"<"<<i<<'>';
+                    fout<<i<<"\n";
                     countInputs--;
                 }
 
             }
         }
     }
+    while(countInputs){
+        countInputs --;
+        fout<<"0\n";
+    }
 
-    fout<<"\n-0";
+    fout<<"-0";
 
     SetConsoleTextAttribute(hConsole, success_color);
     std::cout<<"Pre-compilation successful!";
@@ -98,12 +100,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-#else
-
-#include <iostream>
-
-int main(){
-    std::cout<<"Error: wrong operating system detected: W0000\n";
-    return 1;
-}
-#endif
