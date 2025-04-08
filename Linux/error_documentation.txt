@@ -1,0 +1,4 @@
+Uploader errors:
+    file errors:
+        F000: compf.2p4hex does not exist
+        F001: compf.2p4hex is empty
