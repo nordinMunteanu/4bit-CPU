@@ -25,4 +25,5 @@ done
 del done.exe
 del precompile.exe
 del compile.exe
+del compf.2p4hex
 cmd /k
