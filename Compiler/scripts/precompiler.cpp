@@ -1,5 +1,3 @@
-#define NOMINMAX
-#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,48 +5,58 @@
 #include <vector>
 #include <sstream>
 
-const int default_color = 7,
-          error_color = 4,
-          comment_color = 6,
-          success_color = 10;
 
-bool is_empty(std::ifstream& pFile)
-{
-    return pFile.peek() == std::ifstream::traits_type::eof();
-}
+int main(int argc, char* argv[]){
+    std::cout<<"\033[36mRunning precompilation subroutine\n";
 
-int main(int argc, char *argv[])
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, comment_color);
-    std::cout<<"Running pre-compilation subroutine\n";
-    std::ifstream fin("test.2p4");
+    std::ifstream fin(argv[1]);
+    std::ofstream fout("compf.2p4fab");
 
     fin>>std::ws;
 
-    std::ofstream fout("compf.2p4hex");
+    auto check_extension = [&](){
+        std::string extension(".2p4");
+        std::string str(argv[1]);
+        std::size_t found = str.find(extension);
+        if(found == std::string::npos) return 0;
+        else return 1;
+    };
 
-    if(!fin.is_open()){
-        SetConsoleTextAttribute(hConsole, error_color);
-        std::cout<<"Error: file not found: F100";
-        SetConsoleTextAttribute(hConsole, default_color);
+    if(!check_extension()){
+        std::cout<<"\033[31mWrong file type: ";
+        std::cout<<"\033[4mF020\n";
+
+        std::cout<<"\033[0m\n";
         return 1;
     }
-    if(is_empty(fin)){
-        SetConsoleTextAttribute(hConsole, error_color);
-        std::cout<<"Error: file is empty: F000";
-        SetConsoleTextAttribute(hConsole, default_color);
-        fout<<"-1";
+
+    if(!fin.is_open()){
+        std::cout<< "\033[31mCompilable does not exist: ";
+        std::cout<< "\033[4mF010\n";
+
+        std::cout<<"\033[0m\n";
+        return 1;
+    }
+    if(fin.peek() == std::ifstream::traits_type::eof()){
+        std::cout<< "\033[31mCompilable is empty: ";
+        std::cout<< "\033[4mF011\n";
+
+        std::cout<<"\033[0m\n";
         return 1;
     }
 
     std::string line;
     int i = 0;
-    int countInputs = 0;
+    int countInputs = 2;
 
     while(getline(fin, line)){
+        countInputs = 2;
+
+        if(line == "-0"){
+            goto end_of_comp;
+        }
 		std::transform(line.begin(), line.end(), line.begin(), ::toupper);
-		if(line.size()!=0 && line[0] != ';'){
+		if(line.size()!=0 && line[0] != ';'&&line[0] != '\n' && line[0] != ' '){
             std::vector<std::string>tokens;
             std::stringstream check1(line);
 
@@ -62,41 +70,35 @@ int main(int argc, char *argv[])
             for(auto i : tokens){
 
                 if(i[0] == 'R' && i[1] >='0' && i[1] <= '9'){
-                    countInputs--;
                     i.erase(i.begin()+0);
                 }
 
                 if(i[0] >='A' && i[0] <= 'Z'){
-                    while(countInputs){
-                        countInputs --;
-                        fout<<"0\n";
-                    }
-
-                    if(countInputs <= 0){
-                        countInputs = 2;
-                    }
-
                     fout<<i<<"\n";
                 }
 
                 if(i[0] >= '0' && i[0] <= '9'){
-                    fout<<i<<"\n";
+                    fout<<i<<'\n';
                     countInputs--;
                 }
 
             }
+            }
+
+
+
+            while(countInputs){
+                countInputs --;
+                fout<<"0\n";
         }
     }
-    while(countInputs){
-        countInputs --;
-        fout<<"0\n";
-    }
-
+end_of_comp:
     fout<<"-0";
+    std::cout<<"\033[32mPrecompilation subroutine successful!\n";
 
-    SetConsoleTextAttribute(hConsole, success_color);
-    std::cout<<"Pre-compilation successful!";
-    SetConsoleTextAttribute(hConsole, default_color);
+    fin.close();
+    fout.close();
 
+    std::cout<<"\033[0m\n";
     return 0;
 }
