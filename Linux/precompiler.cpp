@@ -21,29 +21,40 @@ int main(int argc, char* argv[]){
         if(found == std::string::npos) return 0;
         else return 1;
     };
-    
+
     if(!check_extension()){
         std::cout<<"\033[31mWrong file type: ";
         std::cout<<"\033[4mF020\n";
+
+        std::cout<<"\033[0m\n";
         return 1;
     }
 
     if(!fin.is_open()){
         std::cout<< "\033[31mCompilable does not exist: ";
         std::cout<< "\033[4mF010\n";
+
+        std::cout<<"\033[0m\n";
         return 1;
     }
     if(fin.peek() == std::ifstream::traits_type::eof()){
         std::cout<< "\033[31mCompilable is empty: ";
         std::cout<< "\033[4mF011\n";
+
+        std::cout<<"\033[0m\n";
         return 1;
     }
 
     std::string line;
     int i = 0;
-    int countInputs = 0;
+    int countInputs = 2;
 
     while(getline(fin, line)){
+        countInputs = 2;
+
+        if(line == "-0"){
+            goto end_of_comp;
+        }
 		std::transform(line.begin(), line.end(), line.begin(), ::toupper);
 		if(line.size()!=0 && line[0] != ';'&&line[0] != '\n' && line[0] != ' '){
             std::vector<std::string>tokens;
@@ -59,16 +70,10 @@ int main(int argc, char* argv[]){
             for(auto i : tokens){
 
                 if(i[0] == 'R' && i[1] >='0' && i[1] <= '9'){
-                    countInputs--;
                     i.erase(i.begin()+0);
                 }
 
                 if(i[0] >='A' && i[0] <= 'Z'){
-                    while(countInputs){
-                        countInputs --;
-                        fout<<"0\n";
-                    }
-                    countInputs = 2;
                     fout<<i<<"\n";
                 }
 
@@ -78,14 +83,22 @@ int main(int argc, char* argv[]){
                 }
 
             }
+            }
+
+
+
+            while(countInputs){
+                countInputs --;
+                fout<<"0\n";
         }
     }
-
+end_of_comp:
     fout<<"-0";
     std::cout<<"\033[32mPrecompilation subroutine successful!\n";
 
     fin.close();
     fout.close();
+
     std::cout<<"\033[0m\n";
     return 0;
 }
