@@ -6,8 +6,8 @@
 #include <cctype>
 
 std::vector<std::string> instr_names = {
-    "FLG", "ADD", "SUB", "INC", "DEC", 
-    "SHL", "NOT", "AND", "ORR", "XOR", 
+    "FLG", "ADD", "SUB", "INC", "DEC",
+    "SHL", "NOT", "AND", "ORR", "XOR",
     "SET", "SRT", "JMP", "GOF", "GOT",
     "RET", "LBL", "BPZ"
 };
@@ -85,10 +85,22 @@ int strToNum(const std::string& numStr) {
     }
 }
 
+std::string int_to_hex(int v){
+    std::string rez;
+    if(v == 0) return "0";
+    while(v != 0){
+        int t = v%16;
+        v/=16;
+        rez+=(t>=10)? ('A' + t - 10):('0'+t);
+    }
+    reverse(rez.begin(), rez.end());
+    return rez;
+}
+
 void processInstruction(const std::string& instr, std::ofstream& fout) {
     bool found = false;
     int code = -1;
-    
+
     for (size_t i = 0; i < instr_names.size(); ++i) {
         if (instr == instr_names[i]) {
             code = instr_codes[i];
@@ -100,17 +112,18 @@ void processInstruction(const std::string& instr, std::ofstream& fout) {
     if (!found) {
         throw std::invalid_argument("\033[31mInstruction not recognised: C001 (" + instr + ")\n");
     }
-    
-    fout << "<" << code << ">\n";
+
+    fout << "<" << int_to_hex(code) << ">\n";
 }
 
 void processNumber(const std::string& numStr, std::ofstream& fout) {
     try {
         int num = strToNum(numStr);
-        if (num > 15 || num < 0) {
+        std::cout<<num<<'\n';
+        if (num < 0) {
             throw std::out_of_range("\033[31mOverflow detected: C101\n");
         }
-        fout << "<" << num << ">\n";
+        fout << "<" << int_to_hex(num) << ">\n";
     } catch (const std::exception& e) {
         throw;
     }
@@ -123,7 +136,7 @@ int main() {
         return 1;
     }
 
-    std::ofstream fout("compf_out.2p4hex");
+    std::ofstream fout("compf.2p4hex");
     if (!fout.is_open()) {
         std::cerr << "\033[31mFailed to open output file F100\n";
         return 1;
@@ -136,11 +149,11 @@ int main() {
 
     while (getline(fin, line)) {
         line = trim(line);
-        
+
         if (line.empty()) {
             continue;
         }
-        
+
         if (isEndMarker(line)) {
             break;
         }
