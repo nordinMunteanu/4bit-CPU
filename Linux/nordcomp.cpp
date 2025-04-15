@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
         }
     }
 
-    std::string instr("./runner.sh ");
+    std::string instr("runner.sh ");
 
     for(int i = 0; i < 7; ++i){
         if(comv[i] > 1){
@@ -83,6 +83,7 @@ int main(int argc, char* argv[]){
     }
 
     std::cout<<instr<<'\n';
+    system(instr);
 
     return 0;
 }
