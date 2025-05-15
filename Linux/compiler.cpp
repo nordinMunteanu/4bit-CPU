@@ -113,7 +113,10 @@ void processInstruction(const std::string& instr, std::ofstream& fout) {
         throw std::invalid_argument("\033[31mInstruction not recognised: C001 (" + instr + ")\n");
     }
 
-    fout << "<" << int_to_hex(code) << ">\n";
+    fout << "<" << int_to_hex(code);
+    if(instr == "SUB" || instr == "DEC"){
+        fout << "+>\n";
+    } else fout<< "-\n";
 }
 
 void processNumber(const std::string& numStr, std::ofstream& fout) {
